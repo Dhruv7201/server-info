@@ -1,0 +1,81 @@
+form {
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+label {
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+select {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+#server_checkboxes {
+    margin-top: 16px;
+}
+
+#server_all {
+    margin-right: 8px;
+}
+
+.flashes {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.flashes li {
+    margin-bottom: 8px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    background-color: #f8f8f8;
+    border-radius: 4px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.mt-4 {
+    margin-top: 20px;
+}
+
+h1 {
+    color: #333;
+}
+
+#data_center_id {
+    margin-bottom: 16px;
+    box-sizing: border-box;
+}
+
+.form-check-inline {
+    margin-right: 16px;
+    float: left;
+}
+
+.form-check-inline::after {
+    content: "";
+    display: table;
+    clear: both;
+}

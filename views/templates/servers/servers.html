@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block title %} Server Information {% endblock %}
+
+{% block sidebar %}
+<div class="card">
+    <div class="card-header">
+        Filter Data
+        <button
+            class="btn btn-link float-right"
+            type="button"
+            data-toggle="collapse"
+            data-target="#filterSidebar"
+            aria-expanded="false"
+            aria-controls="filterSidebar"
+            id="toggleSidebarBtn"
+        >
+            <img
+                src="{{ url_for('static', filename='bars-solid.svg') }}"
+                alt="expand-arrow"
+            />
+        </button>
+    </div>
+    <div class="card">
+        <div class="collapse show" id="filterSidebar">
+            <div class="card-body" style="max-height: 500px; overflow-y: auto">
+                <div class="form-group" id="filterDataContainer">
+                    <!-- Filter data will be dynamically added here -->
+                    <label>Last Updated At:</label>
+                    <select class="form-control" name="last_updated_at" id="last_updated_at">
+                        <option value="None">None</option>
+                        <option value="24hours">Last 24 hours</option>
+                        <option value="1week">Last 1 week</option>
+                        <option value="1month">Last 1 month</option>
+                        <option value="1year">Last 1 year</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    {% if session['superuser'] %}
+    <div class="col-lg-10">
+        <h1 class="page-header">Server Information</h1>
+    </div>
+    <div class="col-lg-2">
+        <a
+            href="{{ url_for('servers.insert_server_form') }}"
+            class="btn btn-primary btn-block"
+            role="button"
+            >Add Server</a
+        >
+    </div>
+    {% else %}
+    <div class="col-lg-12">
+        <h1 class="page-header">Server Information</h1>
+    </div>
+    {% endif %}
+</div>
+<hr />
+{% if servers %}
+<div class="row" id="serverList">
+    {% for server in servers %}
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card h-100">
+            <img
+                class="card-img-top"
+                src="{{ url_for('static', filename='server-img.png') }}"
+                alt="Server Image"
+            />
+            <div class="card-body">
+                <a
+                    href="{{ url_for('servers.show', server_id=server.id) }}"
+                >
+                    <h5 class="card-title">{{ server.name }}</h5>
+                </a>
+                {% if session['superuser'] %}
+                <div class="btn-group float-right">
+                    <a
+                        href="{{ url_for('servers.update_server_form', server_id=server.id) }}"
+                        >Update</a
+                    >
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div id="serverList" class="row"></div>
+{% endif %}
+</div>
+
+<!-- load css server.css -->
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='server.css') }}"
+/>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        // Toggle sidebar on button click
+        $("#toggleSidebarBtn").on("click", function () {
+            $("#filterSidebar").collapse("toggle");
+        });
+
+        // Fetch data dynamically and render checkboxes
+        $.ajax({
+            url: "{{ url_for('configs.index') }}",
+            type: "GET",
+            success: function (data) {
+                renderFilterCheckboxes(data);
+            },
+        });
+
+        function renderFilterCheckboxes(data) {
+            var filterDataContainer = $("#filterDataContainer");
+
+            for (var key in data) {
+                if (data.hasOwnProperty(key)) {
+                    var values = data[key];
+
+                    // Create a new form group
+                    var formGroup = $("<div class='form-group'></div>");
+
+                    // Label for the key
+                    formGroup.append("<label>" + key + "</label>");
+
+                    // Checkboxes for each value
+                    var checkboxContainer = $("<div class='checkbox-container'></div>");
+                    values.forEach(function (value) {
+                        var checkbox = $(
+                            '<div class="form-check">' +
+                            '<input class="form-check-input" type="checkbox" value="' +
+                            value +
+                            '" name="' +
+                            key +
+                            '">' +
+                            '<label class="form-check-label">' +
+                            value +
+                            "</label>" +
+                            "</div>"
+                        );
+                        checkboxContainer.append(checkbox);
+                    });
+
+                    // Append the form group to the filter data container
+                    formGroup.append(checkboxContainer);
+                    filterDataContainer.append(formGroup);
+                }
+            }
+
+            // Add event listener for checkbox change
+            $(".form-check-input").on("change", function () {
+                updateFilteredServers();
+            });
+            $("#last_updated_at").on("change", function () {
+                updateFilteredServers();
+            });
+        }
+
+        function updateFilteredServers() {
+            // Collect selected checkboxes
+            var selectedFilters = {};
+
+            // Include last_updated_at regardless of checkboxes
+            selectedFilters.last_updated_at = $("#last_updated_at").val();
+
+            $(".form-check-input:checked").each(function () {
+                var key = $(this).attr("name");
+                var value = $(this).val();
+
+                if (!selectedFilters[key]) {
+                    selectedFilters[key] = [];
+                }
+
+                selectedFilters[key].push(value);
+            });
+
+            // AJAX call to get filtered servers
+            $.ajax({
+                url: "{{ url_for('configs.filter') }}",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(selectedFilters),
+                success: function (filteredServers) {
+                    // Update the server list with the filtered results
+                    // (Assuming you have a function to handle this)
+                    updateServerList(filteredServers);
+                },
+            });
+        }
+
+        function updateServerList(filteredServers) {
+            $("#serverList").empty();
+            role = "{{ session['superuser'] }}";
+
+            for (var i = 0; i < filteredServers.length; i++) {
+                var server = filteredServers[i];
+                // Create a new card element for each server
+                var card = $(
+                    '<div class="col-lg-3 col-md-6 mb-4">' +
+                    '<div class="card h-100">' +
+                    `<img class="card-img-top" src="{{ url_for('static', filename='server-img.png') }}" alt="Server Image" />` +
+                    '<div class="card-body">' +
+                    '<h5 class="card-title">' +
+                    // Construct the link using JavaScript
+                    '<a href="' +
+                    "{{ url_for('servers.show', server_id=0) }}".replace(
+                        "0",
+                        server.id
+                    ) +
+                    '">' +
+                    server.name +
+                    "</a>" +
+                    '</h5>' +
+                    // Add the update button if the user is an admin
+                    (role == "True"
+                        ?
+                    '<div class="btn-group float-right">' +
+                    '<a href="' +
+                    "{{ url_for('servers.update_server_form', server_id=0) }}".replace(
+                        "0",
+                        server.id
+                    ) +
+                    '">Update</a>' +
+                    '</div>' +
+                    ""
+                        :
+                    '</div>' +
+                    "") +
+                    '</div>' +
+                    '</div>'
+                );
+
+                // Append the card to the server list container
+                $("#serverList").append(card);
+            }
+        }
+    });
+</script>
+{% endblock %}

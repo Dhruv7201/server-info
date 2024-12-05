@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% block title %} Update Server {% endblock %}
+{% block sidebar %} {% endblock %}
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='form.css') }}" />
+    <div class="row">
+        <div class="col text-center">
+            <h1 class="page-header">Update Server</h1>
+        </div>
+    </div>
+    <hr />
+
+    <div class="row">
+        <div class="col-lg-12">
+            <form action="{{ url_for('servers.update_server', server_id=server.id) }}" method="post" role="form" id="updateServerForm">
+                <!-- Server Details -->
+                <div class="form-group">
+                    <label for="name">Server Name</label>
+                    <input type="text" class="form-control" id="name" name="name" value="{{ server.name }}" />
+                </div>
+                <div class="form-group">
+                    <label for="ip_address">IP Address</label>
+                    <input type="text" class="form-control" id="ip_address" name="ip_address" value="{{ server.ip }}" />
+                </div>
+                <div class="form-group">
+                    <label for="datacenter">Datacenter name</label>
+                    <select class="form-control" name="datacenter" id="datacenter">
+                        {% for datacenter in datacenters %}
+                            <option value="{{ datacenter.id }}" {% if datacenter.id == server.datacenter_id %} selected {% endif %}>
+                                {{ datacenter.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <!-- Add server id to catch in the backend -->
+                <input type="hidden" name="server_id" value="{{ server.id }}" />
+                <!-- Existing Configurations -->
+                {% for config in server.configs %}
+                    <div class="config-container">
+                        <div class="form-group">
+                            <label for="config_key">Config Key:</label>
+                            <input type="text" name="config_key[]" class="form-control config-key" value="{{ config.meta_key }}" />
+                            <input type="hidden" name="config_id[]" value="{{ config.id }}" />
+                        </div>
+                        <div class="form-group">
+                            <label for="config_value">Config Value:</label>
+                            <input type="text" name="config_value[]" class="form-control config-value" value="{{ config.meta_value }}" />
+                            <button type="button" class="btn btn-danger mb-2 remove-button">Remove</button>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <!-- Add Config Button -->
+                <div class="row justify-content-center">
+                    <div class="col-2">
+                        <button id="addConfigButton" type="button" class="btn btn-success">Add Config</button>
+                    </div>
+                    <div class="col-2">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.getElementById('addConfigButton').addEventListener('click', addNewConfig);
+    
+        function addNewConfig() {
+            var configContainer = document.createElement("div");
+            configContainer.classList.add("config-container");
+    
+            // Config Key
+            var keyLabel = document.createElement("label");
+            keyLabel.setAttribute("for", "config_key");
+            keyLabel.innerHTML = "Config Key:";
+    
+            var keyInput = document.createElement("input");
+            keyInput.setAttribute("type", "text");
+            keyInput.setAttribute("name", "new_config_key[]");
+            keyInput.classList.add("form-control");
+            keyInput.classList.add("config-key");
+    
+            var keyHiddenInput = document.createElement("input");
+            keyHiddenInput.setAttribute("type", "hidden");
+            keyHiddenInput.setAttribute("name", "new_config_id[]");
+    
+            // Config Value
+            var valueLabel = document.createElement("label");
+            valueLabel.setAttribute("for", "config_value");
+            valueLabel.innerHTML = "Config Value:";
+    
+            var valueInput = document.createElement("input");
+            valueInput.setAttribute("type", "text");
+            valueInput.setAttribute("name", "new_config_value[]");
+            valueInput.classList.add("form-control");
+            valueInput.classList.add("config-value");
+    
+            var removeButton = document.createElement("button");
+            removeButton.classList.add("btn");
+            removeButton.classList.add("btn-danger");
+            removeButton.classList.add("mb-2");
+            removeButton.classList.add("remove-button");
+            removeButton.setAttribute("type", "button");
+            removeButton.setAttribute("onclick", "removeConfig(this)");
+            removeButton.innerHTML = "Remove";
+    
+            // Append elements to config container
+            configContainer.appendChild(keyLabel);
+            configContainer.appendChild(keyInput);
+            configContainer.appendChild(keyHiddenInput);
+    
+            configContainer.appendChild(valueLabel);
+            configContainer.appendChild(valueInput);
+            configContainer.appendChild(removeButton);
+    
+            // Find the parent container where the new config container should be inserted
+            var parentContainer = document.querySelector(".col-lg-12 form");
+            parentContainer.insertBefore(configContainer, parentContainer.lastElementChild);
+        }
+    
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('remove-button')) {
+                removeConfig(event.target);
+            }
+        });
+    
+        function removeConfig(button) {
+            var configContainer = button.closest('.config-container');
+            configContainer.parentNode.removeChild(configContainer);
+        }
+    </script>
+    {% endblock %}

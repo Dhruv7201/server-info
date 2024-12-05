@@ -1,0 +1,12 @@
+{% extends 'base.html' %} {% block title %} Insert Datacenter {%endblock%} {%
+block content %}
+<form action="{{ url_for('datacenter.insert_datacenter') }}" method="post">
+    <label for="datacenter_name">Datacenter Name:</label>
+    <input type="text" id="datacenter_name" name="datacenter_name" required />
+
+    <label for="datacenter_location">Datacenter Location:</label>
+    <input type="text" id="datacenter_location" name="datacenter_location" />
+
+    <button class="btn btn-primary" type="submit">Submit</button>
+</form>
+{% endblock %}

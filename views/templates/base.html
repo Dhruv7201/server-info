@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- add favicon -->
+        <link
+            rel="shortcut icon"
+            type="image/x-icon"
+            href="{{ url_for('static', filename='favicon.ico') }}"
+        />
+
+        <title>{% block title %} {% endblock %}</title>
+        <!-- Bootstrap CSS -->
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        />
+        <!-- DataTables CSS -->
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css"
+        />
+
+        <!-- Load jQuery first, then DataTables -->
+        <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+        <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+        <!-- ... other scripts ... -->
+
+        <!-- DataTables JavaScript -->
+        <script
+            type="text/javascript"
+            charset="utf8"
+            src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"
+        ></script>
+
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='base.css') }}"
+        />
+    </head>
+
+    <body>
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">Navigation</div>
+                        <div class="card-body">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a
+                                        class="nav-link"
+                                        href="{{ url_for('servers.index') }}"
+                                        >Home</a
+                                    >
+                                </li>
+                                <li class="nav-item">
+                                    <a
+                                        class="nav-link"
+                                        href="{{ url_for('datacenter.index') }}"
+                                        >Datacenters</a
+                                    >
+                                </li>
+                                {% if session['superuser'] %}
+                                <li class="nav-item">
+                                    <a
+                                        class="nav-link"
+                                        href="{{ url_for('users.index') }}"
+                                        >Users</a
+                                    >
+                                </li>
+                                {% endif %}
+                                <li class="nav-item">
+                                    <a
+                                        class="nav-link"
+                                        href="{{ url_for('index.logout') }}"
+                                        >Logout</a
+                                    >
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <br />
+                    {% block sidebar %}{% endblock %}
+                </div>
+                <!-- Main Content -->
+                <div class="col-md-9">
+                    <!-- Add your content here -->
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+        <!-- Bootstrap JS -->
+        <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </body>
+    {% block scripts %}{% endblock %}
+</html>

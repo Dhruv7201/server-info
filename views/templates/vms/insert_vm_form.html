@@ -1,0 +1,136 @@
+{% extends "base.html" %} {% block content %}
+<h1>Create a new VM</h1>
+<link
+    rel="stylesheet"
+    type="text/css"
+    href="{{ url_for('static', filename='form.css') }}"
+/>
+<form action="{{ url_for('vms.insert_vm') }}" method="post">
+    <input type="hidden" name="server_id" value="{{ server_id }}" />
+    <div class="config-container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="autocomplete">
+                    <label for="config_key">Config Key:</label>
+                    <div class="autocomplete-select">
+                        <input
+                            type="text"
+                            name="config_key[]"
+                            class="form-control config-key"
+                        />
+                        <select
+                            class="form-control config-select"
+                            multiple
+                        ></select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="autocomplete">
+                    <label for="config_value">Config Value:</label>
+                    <div class="autocomplete-select">
+                        <input
+                            type="text"
+                            name="config_value[]"
+                            class="form-control config-value"
+                        />
+                        <select
+                            class="form-control config-select"
+                            multiple
+                        ></select>
+                    </div>
+                    <button
+                        class="btn btn-danger mb-2 remove-button"
+                        type="button"
+                    >
+                        Remove
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col">
+            <button class="btn btn-success add-button mb-2" type="button">
+                Add more config
+            </button>
+        </div>
+        <div class="col">
+            <div class="button-group">
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </div>
+        </div>
+    </div>
+</form>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Sample data for suggestions (replace with your actual data)
+    var availableKeys = {{ available_keys|tojson|safe }};
+    var availableValues = {{ available_values|tojson|safe }};
+
+    // Function to create select options
+    function createSelectOptions(container, suggestions) {
+        container.html('');
+        suggestions.forEach(function (suggestion) {
+            container.append('<option value="' + suggestion + '">' + suggestion + '</option>');
+        });
+    }
+
+    // Autocomplete for config_key and config_value
+    $('.config-container').on('click', '.autocomplete-select input', function () {
+        var selectContainer = $(this).closest('.autocomplete-select').find('.config-select');
+        var isKey = $(this).hasClass('config-key');
+        var suggestions = isKey ? availableKeys : availableValues;
+
+        createSelectOptions(selectContainer, suggestions);
+        selectContainer.toggle();
+    });
+
+    $('.config-container').on('keyup', '.autocomplete-select input', function () {
+        var input = $(this).val();
+        var isKey = $(this).hasClass('config-key');
+        var suggestions = isKey ? availableKeys : availableValues;
+
+        if (input.trim() !== '') {
+            suggestions = suggestions.filter(function (item) {
+                return item.toLowerCase().indexOf(input.toLowerCase()) > -1;
+            });
+        }
+
+        var selectContainer = $(this).closest('.autocomplete-select').find('.config-select');
+        createSelectOptions(selectContainer, suggestions);
+    });
+
+    // Handle select option click and update input field
+    $('.config-container').on('click', '.config-select option', function () {
+        var selectedValue = $(this).val();
+        var inputField = $(this).closest('.autocomplete-select').find('input');
+        inputField.val(selectedValue);
+        $(this).closest('.autocomplete-select').find('.config-select').hide();
+    });
+
+    // Handle remove button click
+    $('.config-container').on('click', '.remove-button', function () {
+        var configContainer = $(this).closest('.config-container');
+        if ($('.config-container').length > 1) {
+            configContainer.remove();
+        } else {
+            // sweetalert2 alert
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'You cannot remove the last config!',
+            });
+        }
+    });
+
+    // Handle add button click
+    $('.add-button').on('click', function () {
+        var configContainer = $('.config-container:first').clone(true, true);
+        configContainer.find('input').val('');
+        configContainer.find('select').html('');
+        $('.config-container:last').after(configContainer);
+    });
+</script>
+{% endblock %}

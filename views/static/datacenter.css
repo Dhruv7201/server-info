@@ -1,0 +1,43 @@
+/* Resetting default styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Centering heading */
+h1 {
+    text-align: center;
+}
+
+/* Styling for server table */
+.server-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.server-table th,
+.server-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.server-table th {
+    background-color: #f2f2f2;
+}
+
+.server-table tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+.server-table tfoot {
+    display: table-header-group;
+}
+
+/* Styling for action buttons */
+.action-buttons {
+    display: flex;
+    gap: 5px;
+}

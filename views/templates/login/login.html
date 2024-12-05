@@ -1,0 +1,81 @@
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Login Page</title>
+        <!-- Bootstrap CSS -->
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        />
+        <!-- DataTables CSS -->
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css"
+        />
+
+        <!-- Load jQuery first, then DataTables -->
+        <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+        <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+        <!-- ... other scripts ... -->
+
+        <!-- DataTables JavaScript -->
+        <script
+            type="text/javascript"
+            charset="utf8"
+            src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"
+        ></script>
+
+        <!-- Add your custom styles if needed -->
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='login.css') }}"
+        />
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="login-box">
+                <h1 class="main-text">Login Page</h1>
+                <form class="login-form" action="/login" method="POST">
+                    <label class="label-form" for="username">Username:</label>
+                    <input
+                        class="input-form"
+                        type="text"
+                        id="username"
+                        name="username"
+                        required
+                    /><br /><br />
+
+                    <label class="label-form" for="password">Password:</label>
+                    <input
+                        class="input-form"
+                        type="password"
+                        id="password"
+                        name="password"
+                        required
+                    /><br /><br />
+
+                    <input class="button-form" type="submit" value="Login" />
+                    <input
+                        class="reset-button-form"
+                        type="reset"
+                        value="Reset"
+                        onclick="location.href='/login'"
+                    />
+                </form>
+                <!-- show flask flash message -->
+                {% with messages = get_flashed_messages() %} {% if messages %}
+                <ul class="flashes">
+                    {% for message in messages %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %} {% endwith %}
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </body>
+</html>

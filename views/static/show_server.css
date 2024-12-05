@@ -1,0 +1,22 @@
+/* Add these styles to your show_server.css file */
+
+.custom-card {
+    height: 350px; /* Set your desired height for the Server Information card */
+    overflow-y: auto; /* Enable vertical scrolling if content exceeds height */
+    margin-bottom: 20px; /* Add space between cards */
+}
+
+.card-title {
+    font-size: 1.2rem; /* Increase the font size of the card title */
+}
+
+.custom-card-body {
+    max-height: 400px; /* Set the maximum height for the Server Details card body */
+    overflow-y: auto; /* Enable vertical scrolling if content exceeds height */
+}
+
+/* Additional style for the Server VMs card */
+.custom-card-vms {
+    max-height: 350px; /* Set the maximum height for the Server VMs card body */
+    overflow-y: auto; /* Enable vertical scrolling if content exceeds height */
+}

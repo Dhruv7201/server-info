@@ -1,0 +1,72 @@
+/* Add this CSS to a file, e.g., style.css */
+
+/* General Styles */
+.form-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+}
+
+.button-group {
+    text-align: right;
+}
+
+/* Configuration Styles */
+/* Configuration Styles */
+.config-container {
+    margin-top: 20px;
+    max-width: 600px; /* Set a max-width for better layout */
+}
+
+.config-container .row {
+    margin-bottom: 10px;
+}
+
+.autocomplete-select {
+    position: relative;
+}
+
+.autocomplete-select .config-select {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    z-index: 1000;
+    display: none;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.remove-button {
+    margin-top: 20px; /* Adjust margin for better spacing */
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .config-container {
+        max-width: none; /* Allow containers to expand on smaller screens */
+    }
+
+    .config-container .row {
+        flex-direction: column;
+    }
+
+    .config-container .col-md-4 {
+        width: 100%;
+    }
+}

@@ -1,0 +1,32 @@
+body {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* disable text decoration for links */
+a {
+    text-decoration: none;
+}
+
+/* give custom scroll bar */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #747070;
+    border-radius: 10px;
+    border: 3px solid #f0f0f0;
+    /* change mouse pointer */
+    cursor: pointer;
+}
+
+/* change mouse pointer */
+::-webkit-scrollbar-thumb:hover {
+    background-color: #a0a0a0;
+}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %} {% block title %} DataCenter Information {% endblock
+%} {% block content %}
+<div class="row">
+    {% if session['superuser'] == True %}
+    <div class="col-lg-9">
+        <h1>DataCenter Information</h1>
+    </div>
+    <div class="col-lg-3">
+        <a href="{{ url_for('datacenter.insert_datacenter_form') }}"
+            ><button class="btn btn-primary mb-2">Insert DataCenter</button></a
+        >
+    </div>
+    {% else %}
+    <div class="col-lg-12">
+        <h1>DataCenter Information</h1>
+    </div>
+    {% endif %}
+</div>
+<hr />
+<!-- Table to display datacenter data -->
+<table id="datacenterTable" class="server-table">
+    <thead>
+        <tr>
+            <th class="searchable">ID</th>
+            <th class="searchable">Name</th>
+            <th class="searchable">Location</th>
+            <th>View Servers</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for datacenter in datacenters %}
+        <tr>
+            <td>{{ datacenter.id }}</td>
+            <td>{{ datacenter.name }}</td>
+            <td>{{ datacenter.location }}</td>
+            <td class="action-buttons">
+                <a
+                    href="{{ url_for('servers.index', datacenter_id=datacenter.id) }}"
+                    ><button class="btn btn-primary btn-sm">
+                        Show Servers
+                    </button></a
+                >
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- DataTables Initialization -->
+<script>
+    // Initialize DataTable
+    $(document).ready(function () {
+        var dataTable = $("#datacenterTable").DataTable();
+
+        // Add search functionality
+        $("#searchInput").on("keyup", function () {
+            dataTable.search(this.value).draw();
+        });
+    });
+</script>
+
+<!-- load css datacenter.css -->
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='datacenter.css') }}"
+/>
+{% endblock %}

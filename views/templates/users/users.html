@@ -1,0 +1,105 @@
+{% extends "base.html" %} {% block title %}Users{% endblock %} {% block content
+%}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col text-center">
+            <h1>Users</h1>
+        </div>
+    </div>
+    <div id="userList">
+        {% for user in all_users %}
+        <div class="card user-card mb-3" data-userid="{{ user.id }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ user.username }}</h5>
+                <p class="card-text">Is Super User: {{ user.superuser }}</p>
+                <button
+                    class="btn btn-primary view-servers"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#serverList{{ user.id }}"
+                    aria-expanded="false"
+                    aria-controls="serverList{{ user.id }}"
+                >
+                    View Servers
+                </button>
+                <!-- show two more buttons at right side of div -->
+                <div class="float-right">
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        onclick="location.href='{{ url_for('users.edit_user_form', user_id=user.id) }}'"
+                    >
+                        Edit
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-danger"
+                        onclick="location.href='{{ url_for('users.delete_user', user_id=user.id) }}'"
+                    >
+                        Delete
+                    </button>
+                </div>
+
+                <div
+                    class="collapse server-list mt-3"
+                    id="serverList{{ user.id }}"
+                >
+                    <h3>User Servers:</h3>
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Data Center</th>
+                                <th scope="col">Server</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for server in user.servers %}
+                            <tr>
+                                <td>{{ server.data_center.name }}</td>
+                                <td>{{ server.name }}</td>
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="btn btn-danger"
+                                        onclick="location.href='{{ url_for('users.delete_server', user_id=user.id, server_id=server.id) }}'"
+                                    >
+                                        Unassign
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <button type="button" class="btn btn-primary" onclick="addUser()">
+        Add User
+    </button>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".view-servers").click(function () {
+            var userId = $(this).closest(".user-card").data("userid");
+            $(".server-list")
+                .not("#serverList" + userId)
+                .collapse("hide");
+            $(this)
+                .closest(".user-card")
+                .find(".server-list")
+                .collapse("toggle");
+        });
+    });
+
+    function addUser() {
+        location.href = "{{ url_for('users.add_user_form') }}";
+    }
+</script>
+{% endblock %}

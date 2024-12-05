@@ -1,0 +1,172 @@
+
+{% extends "base.html" %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='add_user.css') }}" />
+<div class="row mt-4 justify-content-center">
+    <h1 class="mt-4">Edit User</h1>
+</div>
+<form method="POST" action="{{ url_for('users.edit_user', user_id=user.id) }}">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" value="{{ user.username }}" required /><br />
+
+    <label for="password">New Password:</label>
+    <input type="password" id="password" name="password" value="" /><br />
+
+    <label for="superuser">Superuser:</label>
+    <select name="superuser" id="superuser">
+        <option value="0" {% if user.superuser == 0 %}selected{% endif %}>No</option>
+        <option value="1" {% if user.superuser == 1 %}selected{% endif %}>Yes</option>
+    </select>
+
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            <label for="data_center_id">Select Data Center:</label>
+            <select name="data_center_id" id="data_center_id" class="form-control">
+                <option value="">Select Data Center</option>
+                {% for data_center_id, data in data_centers_servers.items() %}
+                <option value="{{ data_center_id }}" {% if user.data_center_id == data_center_id %}selected{% endif %}>
+                    {{ data["data_center"].name }}
+                </option>
+                {% endfor %}
+                <option value="all">All</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="server_checkboxes" class="form-group mt-3">
+        <label>Select Server:</label><br />
+        {% for server in default_data_center_servers %}
+        <div class="form-check form-check-inline">
+            <input
+                type="checkbox"
+                name="server_ids[]"
+                value="{{ server.id }}"
+                id="server_{{ server.id }}"
+                class="form-check-input"
+                {% if server.id in user.server_ids %}checked{% endif %}
+            />
+            <label for="server_{{ server.id }}" class="form-check-label">
+                {{ server.name }}
+            </label>
+            <br />
+        </div>
+        {% endfor %}
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Update User</button>
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <ul class="flashes">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %} {% endwith %}
+    <br />
+</form>
+<script>
+    var dataCenterSelect = document.getElementById('data_center_id');
+    var serverCheckboxes = document.getElementById('server_checkboxes');
+
+    // Check if user.server_ids is defined
+    var userServerIds = {{ user.server_ids|default('[]')|tojson }};
+
+    dataCenterSelect.addEventListener('change', function () {
+        var dataCenterId = this.value;
+        console.log('Selected data center ID:', dataCenterId);
+        serverCheckboxes.innerHTML = '';
+
+        if (dataCenterId) {
+            var dataCentersServers = {
+                {% for data_center_id, data in data_centers_servers.items() %}
+                    {{ data_center_id }}: {
+                        'data_center_name': '{{ data["data_center"].name }}',
+                        'servers': [
+                            {% for server in data["servers"] %}
+                                {
+                                    'id': {{ server.id }},
+                                    'name': '{{ server.name }}'
+                                },
+                            {% endfor %}
+                        ]
+                    },
+                {% endfor %}
+            };
+            
+            var selectedDataCenter = dataCentersServers[dataCenterId];
+            if (selectedDataCenter && selectedDataCenter.servers) {
+                if (selectedDataCenter.servers.length > 0) {
+                    var selectAllCheckbox = document.createElement('input');
+                    selectAllCheckbox.type = 'checkbox';
+                    selectAllCheckbox.name = 'server_ids[]';
+                    selectAllCheckbox.value = 'all';
+                    selectAllCheckbox.id = 'server_all';
+
+                    var selectAllLabel = document.createElement('label');
+                    selectAllLabel.htmlFor = 'server_all';
+                    selectAllLabel.appendChild(document.createTextNode('Select All Servers'));
+
+                    serverCheckboxes.appendChild(selectAllCheckbox);
+                    serverCheckboxes.appendChild(selectAllLabel);
+                    serverCheckboxes.appendChild(document.createElement('br'));
+
+                    console.log("Servers for the selected data center:", selectedDataCenter.servers);
+                    selectedDataCenter.servers.forEach(function (server) {
+                        var checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.name = 'server_ids[]';
+                        checkbox.value = server.id;
+                        checkbox.id = 'server_' + server.id;
+
+                        var label = document.createElement('label');
+                        label.htmlFor = 'server_' + server.id;
+                        label.appendChild(document.createTextNode(server.name));
+
+                        // Check if the server ID is in the user's server IDs
+                        if (userServerIds.includes(server.id)) {
+                            checkbox.checked = true;
+                        }
+
+                        serverCheckboxes.appendChild(checkbox);
+                        serverCheckboxes.appendChild(label);
+                        serverCheckboxes.appendChild(document.createElement('br'));
+                    });
+
+                    // Add event listener to "Select All Servers" checkbox
+                    selectAllCheckbox.addEventListener('change', function () {
+                        var otherCheckboxes = document.querySelectorAll('input[name="server_ids[]"]:not(#server_all)');
+                        otherCheckboxes.forEach(function (checkbox) {
+                            checkbox.disabled = this.checked;
+                            if (this.checked) {
+                                checkbox.checked = false;
+                            }
+                        }, this);
+                    });
+                } else {
+                    // No servers for the selected data center, display a message
+                    var message = document.createElement('p');
+                    message.innerHTML = 'No servers for the selected data center.';
+                    serverCheckboxes.appendChild(message);
+                }
+            } else {
+                // No servers for the selected data center, display a message
+                var message = document.createElement('p');
+                message.innerHTML = 'No servers for the selected data center.';
+                serverCheckboxes.appendChild(message);
+            }
+        } else {
+            // No data center selected, display a message
+            var message = document.createElement('p');
+            message.innerHTML = 'No data center selected.';
+            serverCheckboxes.appendChild(message);
+        }
+    });
+
+    // Trigger the change event on page load
+    dataCenterSelect.dispatchEvent(new Event('change'));
+</script>
+
+
+{% endblock %}
