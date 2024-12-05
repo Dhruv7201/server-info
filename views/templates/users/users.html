@@ -86,15 +86,15 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function () {
-        $(".view-servers").click(function () {
-            var userId = $(this).closest(".user-card").data("userid");
-            $(".server-list")
-                .not("#serverList" + userId)
-                .collapse("hide");
+        $('.view-servers').click(function () {
+            var userId = $(this).closest('.user-card').data('userid');
+            $('.server-list')
+                .not('#serverList' + userId)
+                .collapse('hide');
             $(this)
-                .closest(".user-card")
-                .find(".server-list")
-                .collapse("toggle");
+                .closest('.user-card')
+                .find('.server-list')
+                .collapse('toggle');
         });
     });
 

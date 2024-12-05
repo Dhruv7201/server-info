@@ -53,31 +53,35 @@
                                     <a
                                         class="nav-link"
                                         href="{{ url_for('servers.index') }}"
-                                        >Home</a
                                     >
+                                        Home
+                                    </a>
                                 </li>
                                 <li class="nav-item">
                                     <a
                                         class="nav-link"
                                         href="{{ url_for('datacenter.index') }}"
-                                        >Datacenters</a
                                     >
+                                        Datacenters
+                                    </a>
                                 </li>
                                 {% if session['superuser'] %}
                                 <li class="nav-item">
                                     <a
                                         class="nav-link"
                                         href="{{ url_for('users.index') }}"
-                                        >Users</a
                                     >
+                                        Users
+                                    </a>
                                 </li>
                                 {% endif %}
                                 <li class="nav-item">
                                     <a
                                         class="nav-link"
                                         href="{{ url_for('index.logout') }}"
-                                        >Logout</a
                                     >
+                                        Logout
+                                    </a>
                                 </li>
                             </ul>
                         </div>

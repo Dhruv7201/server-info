@@ -9,10 +9,12 @@ content %}
 </div>
 <form method="POST" action="{{ url_for('users.add_user') }}">
     <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required /><br />
+    <input type="text" id="username" name="username" required />
+    <br />
 
     <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required /><br />
+    <input type="password" id="password" name="password" required />
+    <br />
     <label for="superuser">Superuser:</label>
     <select name="superuser" id="superuser">
         <option value="0">No</option>
@@ -38,7 +40,8 @@ content %}
     </div>
 
     <div id="server_checkboxes" class="form-group mt-3">
-        <label>Select Server:</label><br />
+        <label>Select Server:</label>
+        <br />
         {% for server in default_data_center_servers %}
         <div class="form-check form-check-inline">
             <input

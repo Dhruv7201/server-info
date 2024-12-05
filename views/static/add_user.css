@@ -75,7 +75,7 @@ h1 {
 }
 
 .form-check-inline::after {
-    content: "";
+    content: '';
     display: table;
     clear: both;
 }
