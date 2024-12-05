@@ -4,36 +4,39 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User
 
 
-index = Blueprint('index', __name__, template_folder='templates/login', static_folder='static')
+index = Blueprint(
+    "index", __name__, template_folder="templates/login", static_folder="static"
+)
 
-@index.route('/')
+
+@index.route("/")
 def main():
-    return render_template('login/login.html')
+    return render_template("login/login.html")
 
 
-@index.route('/login', methods=['GET', 'POST'])
+@index.route("/login", methods=["GET", "POST"])
 def login():
-    if request.method == 'POST':
-        username = request.form.get('username', None)
-        password = request.form.get('password', None)
+    if request.method == "POST":
+        username = request.form.get("username", None)
+        password = request.form.get("password", None)
         user = User.query.filter_by(username=username).first()
         # check password hash
         if user and check_password_hash(user.password, password):
-            session['logged_in'] = True
-            session['username'] = username
-            session['superuser'] = user.superuser
-            return redirect(url_for('servers.index'))
+            session["logged_in"] = True
+            session["username"] = username
+            session["superuser"] = user.superuser
+            return redirect(url_for("servers.index"))
         else:
-            flash('Invalid credentials')
-            return render_template('login/login.html')
+            flash("Invalid credentials")
+            return render_template("login/login.html")
 
-    return render_template('login/login.html')
+    return render_template("login/login.html")
 
 
-@index.route('/logout')
+@index.route("/logout")
 def logout():
-    session['logged_in'] = False
-    session['username'] = None
-    session['superuser'] = False
+    session["logged_in"] = False
+    session["username"] = None
+    session["superuser"] = False
     session.clear()
-    return redirect(url_for('index.main'))
+    return redirect(url_for("index.main"))

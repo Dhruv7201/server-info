@@ -14,4 +14,3 @@ def register_blueprints(app):
     app.register_blueprint(configs)
     app.register_blueprint(vms)
     app.register_blueprint(users)
-    
